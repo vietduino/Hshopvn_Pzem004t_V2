@@ -12,8 +12,8 @@
 
 #include "Hshopvn_Pzem004t_V2.h"
 
-#define RX_PZEM     12
-#define TX_PZEM     11
+#define RX_PZEM     D2
+#define TX_PZEM     D1
 
 // Using with SoftwareSerial.
 Hshopvn_Pzem004t_V2 pzem1(TX_PZEM, RX_PZEM);
@@ -24,7 +24,7 @@ Hshopvn_Pzem004t_V2 pzem1(TX_PZEM, RX_PZEM);
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  Serial.println("Start Hshop test PZEM004T V2 !");
+  Serial.println("Start Hshop test PZEM004T V2 ! ++++");
 
   // init module
   pzem1.begin();

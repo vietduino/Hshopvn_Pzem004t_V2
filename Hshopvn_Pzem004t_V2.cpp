@@ -64,32 +64,37 @@ pzem_info Hshopvn_Pzem004t_V2::getData(){
   port->write(getValue_para, sizeof(getValue_para));
 
   unsigned long temTime = millis();
-  pzem_value pzemData;
   bool b_complete = false;
+  uint8_t myBuf[RESPONSE_SIZE];
 
   while ((millis() - temTime) < ui_timeOut) {
     if (port->available()) {
-      port->readBytes((byte*)&pzemData, sizeof(pzem_value));
+      port->readBytes(myBuf, RESPONSE_SIZE);
       b_complete = true;
-      DB("port->available");
+      DB_LN("port->available");
+      yield();
       break;
     }
   }
 
   if (b_complete) {
-    tem_pzem.volt = (float)MIROR_VALUE(pzemData.voltage_int) * SCALE_V;
-    tem_pzem.ampe = (float)MIROR_VALUE(pzemData.ampe_int) * SCALE_A;
-    tem_pzem.power = (float)MIROR_VALUE(pzemData.power_int) * SCALE_P;
-    tem_pzem.energy = (float)MIROR_VALUE(pzemData.energy_int) * SCALE_E;
-    tem_pzem.freq = (float)MIROR_VALUE(pzemData.freq_int) * SCALE_H;
-    tem_pzem.powerFactor = (float)MIROR_VALUE(pzemData.powerFactor_int) * SCALE_PF;
+    tem_pzem.volt = HSHOPVN_PZEM_GET_VALUE(voltage,SCALE_V);
+    tem_pzem.ampe = HSHOPVN_PZEM_GET_VALUE(ampe, SCALE_A);
+    tem_pzem.power = HSHOPVN_PZEM_GET_VALUE(power, SCALE_P);
+    tem_pzem.energy = HSHOPVN_PZEM_GET_VALUE(energy, SCALE_E);
+    tem_pzem.freq = HSHOPVN_PZEM_GET_VALUE(freq, SCALE_H);
+    tem_pzem.powerFactor = HSHOPVN_PZEM_GET_VALUE(powerFactor, SCALE_PF);
 
-    DB(tem_pzem.volt);    DB(F("V - "));
-    DB(tem_pzem.ampe);    DB(F("A - "));
-    DB(tem_pzem.power);    DB(F("W - "));
-    DB(tem_pzem.energy);    DB(F("Wh - "));
-    DB(tem_pzem.freq);    DB(F("Hz - "));
-    DB_LN(tem_pzem.powerFactor);    DB(F(" - "));
+    DB(pzemData.address, HEX);    DB(F(" - "));
+    DB(pzemData.byteSuccess, HEX);    DB(F(" - "));
+    DB(pzemData.numberOfByte, HEX);    DB(F(" -- "));
+
+    DB(pzemData.voltage_int, HEX);    DB(F("V - "));
+    DB(pzemData.ampe_int, HEX);    DB(F("A - "));
+    DB(pzemData.power_int, HEX);    DB(F("W - "));
+    DB(pzemData.energy_int, HEX);    DB(F("Wh - "));
+    DB(pzemData.freq_int, HEX);    DB(F("Hz - "));
+    DB_LN(pzemData.powerFactor_int, HEX);    DB(F(" - "));
 
   } else {
     DB_LN(F("Read fail"));
@@ -111,7 +116,6 @@ bool Hshopvn_Pzem004t_V2::resetEnergy() {
   port->write(resetEnergy_para, sizeof(resetEnergy_para));
 
   unsigned long temTime = millis();
-  pzem_value pzemData;
   bool b_complete = false;
 
   byte testRespone[4];
@@ -121,6 +125,7 @@ bool Hshopvn_Pzem004t_V2::resetEnergy() {
       port->readBytes(testRespone, sizeof(testRespone));
       b_complete = true;
       DB(F("port->available"));
+      yield();
       break;
     }
   }

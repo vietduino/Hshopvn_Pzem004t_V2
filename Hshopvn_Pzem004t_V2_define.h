@@ -3,8 +3,6 @@
 
 #include "arduino.h"
 
-#define MIROR_VALUE(x)        ((uint16_t)(((x<<8)&0xff00)+((x>>8)&0xff)))
-
 #define SCALE_V               (0.1)
 #define SCALE_A               (0.001)
 #define SCALE_P               (0.1)
@@ -15,6 +13,38 @@
 #define MAX_PZEM_TIMEOUT      (20000) //ms
 #define MIN_PZEM_TIMEOUT      (100) //ms
 
+#define HSHOP_PZEM_CONVERT(low,high,scale)      (float)(((high<<8) + low) * scale)
+#define HSHOPVN_PZEM_GET_VALUE(unit, scale)     HSHOP_PZEM_CONVERT(myBuf[_##unit##_L__], myBuf[_##unit##_H__],scale)
+
+enum{
+  _address__ = 0,
+  _byteSuccess__,
+  _numberOfByte__,
+  _voltage_H__,
+  _voltage_L__,
+  _ampe_H__,
+  _ampe_L__,
+  _nouse1H__,
+  _nouse1L__,
+  _power_H__,
+  _power_L__,
+  _nouse2H__,
+  _nouse2L__,
+  _energy_H__,
+  _energy_L__,
+  _nouse3H__,
+  _nouse3L__,
+  _freq_H__,
+  _freq_L__,
+  _powerFactor_H__,
+  _powerFactor_L__,
+  _nouse4H__,
+  _nouse5L__,
+  _crc_H__,
+  _crc_L__,
+  RESPONSE_SIZE
+};
+
 typedef struct pzem_info{
   float volt;
   float ampe;
@@ -22,24 +52,6 @@ typedef struct pzem_info{
   float energy;
   float freq;
   float powerFactor;
-  
-};
-
-typedef struct pzem_value{
-  byte address;
-  byte byteSuccess;
-  byte numberOfByte;
-  int voltage_int; 
-  int ampe_int;
-  int nouse1;
-  int power_int;
-  int nouse2;
-  int energy_int;
-  int nouse3;
-  int freq_int;
-  int powerFactor_int;
-  int nouse4;
-  int crc_int; 
 };
 
 #endif
