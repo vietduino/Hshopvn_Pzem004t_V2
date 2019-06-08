@@ -1,5 +1,8 @@
 /*
-  Link product: https://hshop.vn/products/mach-do-ap-dong-cong-suat-nang-luong-ac-100a-giao-tiep-uart
+  Link product: 
+  - https://hshop.vn/products/mach-do-ap-dong-cong-suat-nang-luong-ac-100a-giao-tiep-uart
+  - https://hshop.vn/products/vietduino-uno
+
   Wiring:
 
         Uno/Mega2560--------------------------------PZEM004T
@@ -12,8 +15,8 @@
 
 #include "Hshopvn_Pzem004t_V2.h"
 
-#define RX_PZEM     D2
-#define TX_PZEM     D1
+#define RX_PZEM     3
+#define TX_PZEM     2
 
 // Using with SoftwareSerial.
 Hshopvn_Pzem004t_V2 pzem1(TX_PZEM, RX_PZEM);
