@@ -13,8 +13,10 @@
 #define MAX_PZEM_TIMEOUT      (20000) //ms
 #define MIN_PZEM_TIMEOUT      (100) //ms
 
-#define HSHOP_PZEM_CONVERT(low,high,scale)      (float)(((high<<8) + low) * scale)
-#define HSHOPVN_PZEM_GET_VALUE(unit, scale)     HSHOP_PZEM_CONVERT(myBuf[_##unit##_L__], myBuf[_##unit##_H__],scale)
+#define HSHOP_PZEM_CONVERT(low,high,scale)        (((high<<8) + low) * scale)
+#define HSHOPVN_PZEM_GET_VALUE(unit, scale)       (float)(HSHOP_PZEM_CONVERT(myBuf[_##unit##_L__], myBuf[_##unit##_H__],scale))
+#define HSHOPVN_PZEM_GET_VALUE2(unit, scale)      (float)(((HSHOP_PZEM_CONVERT(myBuf[_##unit##_1L__], myBuf[_##unit##_1H__],1) << 24)|\
+                                                  HSHOP_PZEM_CONVERT(myBuf[_##unit##_L__], myBuf[_##unit##_H__],1)) * scale)
 
 enum{
   _address__ = 0,
@@ -24,16 +26,16 @@ enum{
   _voltage_L__,
   _ampe_H__,
   _ampe_L__,
-  _nouse1H__,
-  _nouse1L__,
+  _ampe_1H__,
+  _ampe_1L__,
   _power_H__,
   _power_L__,
-  _nouse2H__,
-  _nouse2L__,
+  _power_1H__,
+  _power_1L__,
   _energy_H__,
   _energy_L__,
-  _nouse3H__,
-  _nouse3L__,
+  _energy_1H__,
+  _energy_1L__,
   _freq_H__,
   _freq_L__,
   _powerFactor_H__,

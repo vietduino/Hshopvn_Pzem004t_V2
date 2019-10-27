@@ -79,9 +79,9 @@ pzem_info Hshopvn_Pzem004t_V2::getData(){
 
   if (b_complete) {
     tem_pzem.volt = HSHOPVN_PZEM_GET_VALUE(voltage,SCALE_V);
-    tem_pzem.ampe = HSHOPVN_PZEM_GET_VALUE(ampe, SCALE_A);
-    tem_pzem.power = HSHOPVN_PZEM_GET_VALUE(power, SCALE_P);
-    tem_pzem.energy = HSHOPVN_PZEM_GET_VALUE(energy, SCALE_E);
+    tem_pzem.ampe = HSHOPVN_PZEM_GET_VALUE2(ampe, SCALE_A);
+    tem_pzem.power = HSHOPVN_PZEM_GET_VALUE2(power, SCALE_P);
+    tem_pzem.energy = HSHOPVN_PZEM_GET_VALUE2(energy, SCALE_E);
     tem_pzem.freq = HSHOPVN_PZEM_GET_VALUE(freq, SCALE_H);
     tem_pzem.powerFactor = HSHOPVN_PZEM_GET_VALUE(powerFactor, SCALE_PF);
 
@@ -115,20 +115,24 @@ bool Hshopvn_Pzem004t_V2::resetEnergy() {
   }
   port->write(resetEnergy_para, sizeof(resetEnergy_para));
 
-  unsigned long temTime = millis();
-  bool b_complete = false;
+  unsigned long temTime = millis(), temSubtime = 0;;
+  bool b_complete = true;
 
   byte testRespone[4];
 
-  while ((millis() - temTime) < ui_timeOut) {
+  while (temSubtime < ui_timeOut) {
+    temSubtime = millis() - temTime;
     if (port->available()) {
       port->readBytes(testRespone, sizeof(testRespone));
-      b_complete = true;
+      for(int cf = 0; cf < 4; cf++){
+        if(testRespone[cf] != resetEnergy_para[cf])  b_complete = false;
+      }
       DB(F("port->available"));
       yield();
       break;
     }
   }
+  if(temSubtime >= ui_timeOut) b_complete = false;
 
   if (b_complete) {
     if(testRespone[3] == resetEnergy_para[3]){
